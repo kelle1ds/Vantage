@@ -1,0 +1,109 @@
+
+.app__container {
+    margin: 3% 5%;
+}
+
+
+.app__menu__img {
+    height: 50px;
+    width: auto;
+}
+
+.app__content {
+    display: flex;
+    margin-top: 20px;
+}
+
+.wind__speed__container {
+    display: flex;
+    flex-direction: column;
+    background-color: #082255;
+    border-radius: 0.55rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+
+.graph__title {
+    color: #fff !important;
+    letter-spacing: 0.3rem !important;
+    padding: 25px 25px 0px 25px;
+    margin-bottom: 0px !important;
+    font-size: 1em;
+}
+
+
+.auto__container {
+    display: flex;
+    justify-content: space-between;
+    color: #DFE3E8;
+    padding: 0px 15px;
+}
+
+.graph__container {
+    background-color: #082255;
+    border-radius: 0.55rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+
+.gauge__container {
+    color: white;
+    font-size: 48px;
+    background-color: #082255;
+    border-radius: 0.55rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    font-size: 1em;
+}
+
+.first {
+    margin-bottom: 15px;
+}
+
+.second {
+    margin-top: 15px;
+}
+
+.histogram__direction {
+    margin-left: 15px;
+}
+
+.circle.track {
+    stroke-width: 15px;
+    r:184;
+    stroke-dasharray: 1108;
+    stroke: rgb(94, 92, 92)!important;
+    background-image: radial-gradient(red, green, blue);
+}
+
+.circle.track.progress{
+    stroke-width: 17px;
+    r:184;
+    stroke: #6EE5FF   !important;
+}
+
+
+@media only screen and (max-width: 600px) {
+    .histogram__direction {
+        margin: 15px 0px 20px 0px;
+    }
+    .app__content {
+        display: block;
+    }    
+    .app__menu__img {
+        height: 30px;
+        width: auto;
+    }
+    .app__header {
+        display: flex;
+        flex-direction: column;
+    }
+    .app__header__desc {
+        order: 1;
+        text-align: center;
+    }
+    .app__header__logo {
+        order: 0;
+    }
+    .app__header__title {
+        font-size: 1.5em;
+        padding-top: 15px;
+    }
+}
