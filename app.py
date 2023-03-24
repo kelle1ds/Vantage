@@ -15,7 +15,7 @@ import dash_daq as daq
 df = pd.read_csv('dex-chart.csv')
 
 #date = df.iloc[0,0].split()[1]
-maxLength = 50
+maxLength = 100
 xTemp = deque(maxlen = maxLength)
 temp = deque(maxlen = maxLength)
 temp2 = deque(maxlen = maxLength)
@@ -78,100 +78,104 @@ app.layout = html.Div([
     			interval = 5000,
     			n_intervals = 1
     		),
+            dcc.Slider(
+                id='my-graph-slider-1',min=0,max=10,value=5
+            ),
             ],
             className="graph__container",
         ),
         
-        ## Temparture Gauge#####################
-        html.Div([
-            daq.Gauge(
-                id='my-gauge-1',
-                #label='Temp.',
-                color={"gradient":False,
-                       "ranges":{"green":[96,100],
-                                 "yellow":[100,105],
-                                 "red":[105,110]}},
-                label = {"label":'Temperature',
-                         "style":
-                             {"color":"black",
-                              "font-size":"30px"}},
-                labelPosition='top',
-                showCurrentValue=True,
-                units='degF',
-                size=gaugeSize,
-                scale={'start': 95, 'interval': 1, 'labelInterval': 1},
-                max=110,
-                min=96,
-                value=98
+        ## Temp Gauges#####################
+        html.Table(
+            html.Tr([
+                #Temp Gauge ######################
+                html.Td(
+                        [
+                        
+                        daq.Gauge(
+                            id='my-gauge-1',
+                            #label='Temp.',
+                            color={"gradient":False,"ranges":{"green":[96,100],"yellow":[100,105],"red":[105,110]}},
+                            label = {"label":'Temperature',"style":{"color":"black","font-size":"30px"}},
+                            labelPosition='top',
+                            showCurrentValue=True,
+                            units='degF',
+                            size=gaugeSize,
+                            scale={'start': 95, 'interval': 1, 'labelInterval': 1},
+                            max=110,min=96,value=98
+                            ),
+                        dcc.Interval(
+                    		id = 'gauge-update1',
+                    		interval = 5000,
+                    		n_intervals = 1
+                            ),
+                    ]
+                        ),
+                
+                #RTD1 Gauge ######################
+                html.Td(
+                        [
+                            daq.Gauge(
+                                id='my-gauge-RTD1',
+                                color={"gradient":False,"ranges":{"green":[65,150],"yellow":[150,175],"red":[175,200]}},
+                                label = {"label":'RTD1',
+                                         "style":{"color":"black","font-size":"30px"}},
+                                labelPosition='top',showCurrentValue=True,units='F',size=gaugeSize,
+                                scale={'start': 65, 'interval': 5, 'labelInterval': 10},
+                                max=200, min=65, value=98
+                                ),
+                            dcc.Interval(
+                        		id = 'gauge-update-RTD1',
+                        		interval = 5000,
+                        		n_intervals = 1
+                                )      
+                            ]
+                    ),
+                
+                #RTD2 Gauge ######################
+                html.Td(
+                        [
+                            daq.Gauge(
+                                id='my-gauge-RTD2',
+                                color={"gradient":False,"ranges":{"green":[65,150],"yellow":[150,175],"red":[175,200]}},
+                                label = {"label":'RTD2',
+                                         "style":{"color":"black","font-size":"30px"}},
+                                labelPosition='top',showCurrentValue=True,units='F',size=gaugeSize,
+                                scale={'start': 65, 'interval': 5, 'labelInterval': 10},
+                                max=200, min=65, value=98
+                                ),
+                            dcc.Interval(
+                        		id = 'gauge-update-RTD2',
+                        		interval = 5000,
+                        		n_intervals = 1
+                                )      
+                        ]
+
+                    ),
+                
+                #RTD3 Gauge ######################
+                html.Td(
+                        [
+                            daq.Gauge(
+                                id='my-gauge-RTD3',
+                                color={"gradient":False,"ranges":{"green":[65,150],"yellow":[150,175],"red":[175,200]}},
+                                label = {"label":'RTD3',
+                                         "style":{"color":"black","font-size":"30px"}},
+                                labelPosition='top',showCurrentValue=True,units='F',size=gaugeSize,
+                                scale={'start': 65, 'interval': 5, 'labelInterval': 10},
+                                max=200, min=65, value=98
+                                ),
+                            dcc.Interval(
+                        		id = 'gauge-update-RTD3',
+                        		interval = 5000,
+                        		n_intervals = 1
+                                )       
+                        ]
+                    )  ,
+                ],
                 ),
-        dcc.Interval(
-    		id = 'gauge-update1',
-    		interval = 5000,
-    		n_intervals = 1
-    	),
-        ],style={'display': 'inline-block'},
-        ),
-            
-            
-        
-        #RTD1 Gauge ######################
-        html.Div([
-            daq.Gauge(
-                id='my-gauge-RTD1',
-                color={"gradient":False,"ranges":{"green":[65,150],"yellow":[150,175],"red":[175,200]}},
-                label = {"label":'RTD1',
-                         "style":{"color":"black","font-size":"30px"}},
-                labelPosition='top',showCurrentValue=True,units='F',size=gaugeSize,
-                scale={'start': 65, 'interval': 5, 'labelInterval': 10},
-                max=200, min=65, value=98
-                ),
-        dcc.Interval(
-    		id = 'gauge-update-RTD1',
-    		interval = 5000,
-    		n_intervals = 1
-            )        
-        ],style={'display': 'inline-block'},
-        ),
-        
-        
-        #RTD2 Gauge ##################
-        html.Div([
-            daq.Gauge(
-                id='my-gauge-RTD2',
-                color={"gradient":False,"ranges":{"green":[65,150],"yellow":[150,175],"red":[175,200]}},
-                label = {"label":'RTD2',
-                         "style":{"color":"black","font-size":"30px"}},
-                labelPosition='top',showCurrentValue=True,units='F',size=gaugeSize,
-                scale={'start': 65, 'interval': 5, 'labelInterval': 10},
-                max=200, min=65, value=98
-                ),
-        dcc.Interval(
-    		id = 'gauge-update-RTD2',
-    		interval = 5000,
-    		n_intervals = 1
-            )        
-        ],style={'display': 'inline-block'},
-        ),
-        
-        #RTD3 Gauge#################
-        html.Div([
-            daq.Gauge(
-                id='my-gauge-RTD3',
-                color={"gradient":False,"ranges":{"green":[65,150],"yellow":[150,175],"red":[175,200]}},
-                label = {"label":'RTD3',
-                         "style":{"color":"black","font-size":"30px"}},
-                labelPosition='top',showCurrentValue=True,units='F',size=gaugeSize,
-                scale={'start': 65, 'interval': 5, 'labelInterval': 10},
-                max=200, min=65, value=98
-                ),
-        dcc.Interval(
-    		id = 'gauge-update-RTD3',
-    		interval = 5000,
-    		n_intervals = 1
-            )        
-        ],style={'display': 'inline-block'},
-        ),
-        
+
+            ),
         
         
         ##Second chart with IR readings
@@ -184,6 +188,9 @@ app.layout = html.Div([
         			interval = 5000,
         			n_intervals = 1
         		),
+                dcc.Slider(
+                    id='my-graph-slider-2',min=0,max=10,value=5
+                ),
             ],         
             className="graph__container",
         ),
@@ -395,13 +402,14 @@ app.layout = html.Div([
             
     ]
 )
-
+#my-graph-slider-1
 @app.callback(
 	Output('live-graph', 'figure'),
-	[ Input('graph-update', 'n_intervals') ]
+	Input('graph-update', 'n_intervals'),
+    Input('my-graph-slider-1', 'value')
 )
 
-def update_graph_temp(n):
+def update_graph_temp(n,value):
     #used to set scale
     df2 = df[['J-Type TC 1 (degF)','RTD 1 (degF)','RTD 2 (degF)','RTD 3 (degF)']].copy()
     
@@ -409,6 +417,8 @@ def update_graph_temp(n):
     
     time2 = time.split('.')[0]
     time1 = datetime.strptime(time2, '%H:%M:%S')
+    
+    width = value*.01
     
     h = time1.hour
     m = time1.minute
@@ -434,7 +444,7 @@ def update_graph_temp(n):
     fig.add_trace(trace3)
     fig.add_trace(trace4)
 
-    fig.update_layout(xaxis=dict(range=[max(xTemp)-0.02,max(xTemp)+.0001]),
+    fig.update_layout(xaxis=dict(range=[max(xTemp)-width,max(xTemp)+.0001]),
                   yaxis = dict(range = [df2.to_numpy().min()-5,df2.to_numpy().max()+5]),
                   paper_bgcolor="LightSteelBlue",
                   )
@@ -443,13 +453,16 @@ def update_graph_temp(n):
 
 @app.callback(
 	Output('live-graph1', 'figure'),
-	[ Input('graph-update1', 'n_intervals') ]
+	Input('graph-update1', 'n_intervals'),
+    Input('my-graph-slider-2', 'value')
 )
-def update_graph_IR1(n):
+def update_graph_IR1(n,value):
     
     df2 = df[['IR 1 (F)','IR 2 (F)','IR 3 (F)','IR 4 (F)',
               'IR 5 (F)','IR 6 (F)','IR 7 (F)', 'IR 8 (F)',
               'IR 9 (F)','IR 10 (F)']].copy()
+    
+    width = value * .01
 	
     time = df.iloc[n,0].split()[1]
     
@@ -500,11 +513,10 @@ def update_graph_IR1(n):
 
     
     fig.update_layout(
-        xaxis = dict(range = [max(XIr1)-.015,max(XIr1)+.0001]),
+        xaxis = dict(range = [max(XIr1)-width,max(XIr1)+.0001]),
         yaxis = dict(range = [df2.to_numpy().min()+10,df2.to_numpy().max()+10]),
         paper_bgcolor="LightSteelBlue",
     )
-    
     
     return fig
 
@@ -597,4 +609,4 @@ def update_gauge_rtd3(n):
 
 
 if __name__ == '__main__':
-	app.run_server(debug=False)
+	app.run_server(debug=True)
