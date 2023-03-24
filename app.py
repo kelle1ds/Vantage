@@ -87,7 +87,8 @@ app.layout = html.Div([
         
         ## Temp Gauges#####################
         html.Table(
-            html.Tr([
+            html.Tr(
+                [
                 #Temp Gauge ######################
                 html.Td(
                         [
@@ -172,9 +173,8 @@ app.layout = html.Div([
                                 )       
                         ]
                     )  ,
-                ],
+                ],style={"width": "100%", "font-weight": "bold"}
                 ),
-
             ),
         
         
