@@ -21,7 +21,7 @@ temp = deque(maxlen = maxLength)
 temp2 = deque(maxlen = maxLength)
 XIr1 = deque(maxlen = maxLength)
 ir1 = deque(maxlen = maxLength)   #time
-ir2 = deque(maxlen = maxLength)   #time
+ir2 = deque(maxlen = maxLength)   
 ir3 = deque(maxlen = maxLength)   #time
 ir4 = deque(maxlen = maxLength)   #time
 ir5 = deque(maxlen = maxLength)   #time
@@ -33,12 +33,19 @@ ir10 = deque(maxlen = maxLength)   #time
 rtd1 = deque(maxlen = maxLength)   #time
 rtd2 = deque(maxlen = maxLength)   #time
 rtd3 = deque(maxlen = maxLength)   #time
-
+p2 = deque(maxlen = maxLength)   #time
+p1 = deque(maxlen = maxLength)   #time
+xWater = deque(maxlen = maxLength)
+water1 = deque(maxlen = maxLength)   #time
+water2 = deque(maxlen = maxLength)   #time
+xAir = deque(maxlen = maxLength)
+air1 = deque(maxlen = maxLength)   #time
 
 
 app = dash.Dash(__name__)
 
 app.title = "Sensor Monitor"
+
 
 theme = {
     'dark': True,
@@ -399,9 +406,111 @@ app.layout = html.Div([
         ],style={'display': 'inline-block'},
         ),
         
+        
+        #######################
+        #Start of Third Chart with water flow
+        html.Div([
+            html.H5('Water flow in GPM'),
+    		dcc.Graph(id = 'live-graph-water', animate = True),
+    		dcc.Interval(
+    			id = 'water-update',
+    			interval = 5000,
+    			n_intervals = 1
+    		),
+            dcc.Slider(
+                id='graph-slider-water',min=0,max=10,value=5
+            ),
+            ],
+            className="graph__container",
+        ),
+        #######################
+        #Start of Third Chart with air flow
+        html.Div([
+            html.H5('Air flow in GPM'),
+    		dcc.Graph(id = 'live-graph-air', animate = True),
+    		dcc.Interval(
+    			id = 'air-update',
+    			interval = 5000,
+    			n_intervals = 1
+    		),
+            dcc.Slider(
+                id='graph-slider-air',min=0,max=10,value=5
+            ),
+            ],
+            className="graph__container",
+        ),
+        
+        ## Water and Air Gauges#####################
+        html.Table(
+            html.Tr(
+                [
+                #water1 Gauge ######################
+                html.Td(
+                        [
+                        
+                            daq.Gauge(
+                                id='gauge-water1',
+                                color={"gradient":False,"ranges":{"green":[0,90],"yellow":[90,95],"red":[95,100]}},
+                                label = {"label":'Water One',"style":{"color":"black","font-size":"30px"}},
+                                labelPosition='top',showCurrentValue=True,units='GPM',size=gaugeSize,
+                                scale={'start': 0, 'interval': 1, 'labelInterval': 20},
+                                max=100,min=-0,value=40
+                                ),
+                            dcc.Interval(
+                        		id = 'gauge-update-water1',
+                        		interval = 5000,
+                        		n_intervals = 1
+                                ),
+                    ]
+                        ),
+                
+                #water2 Gauge ######################
+                html.Td(
+                        [
+                            daq.Gauge(
+                                id='gauge-water2',
+                                color={"gradient":False,"ranges":{"green":[-20,0],"yellow":[0,10],"red":[10,20]}},
+                                label = {"label":'Water Two',"style":{"color":"black","font-size":"30px"}},
+                                labelPosition='top',showCurrentValue=True,units='GPM',size=gaugeSize,
+                                scale={'start': -20, 'interval': 1, 'labelInterval': 10},
+                                max=20, min=-20, value=0
+                                ),
+                            dcc.Interval(
+                        		id = 'gauge-update-water2',
+                        		interval = 5000,
+                        		n_intervals = 1
+                                )      
+                            ]
+                    ),
+                
+                #RTD2 Gauge ######################
+                html.Td(
+                        [
+                            daq.Gauge(
+                                    id='gauge-air',
+                                    color={"gradient":False,"ranges":{"green":[0,400],"yellow":[400,450],"red":[450,500]}},
+                                    label = {"label":'Air Flow',"style":{"color":"black","font-size":"30px"}},
+                                    labelPosition='top',showCurrentValue=True,units='F',size=gaugeSize,
+                                    scale={'start': 0, 'interval': 5, 'labelInterval': 10},
+                                    max=500, min=0, value=98
+                                ),
+                            dcc.Interval(
+                            		id = 'gauge-update-air',
+                            		interval = 5000,
+                            		n_intervals = 1
+                                )      
+                        ]
+
+                    ), 
+                ],style={"width": "100%", "font-weight": "bold"}
+                ),
+            ),
             
     ]
 )
+
+
+
 #my-graph-slider-1
 @app.callback(
 	Output('live-graph', 'figure'),
@@ -424,7 +533,6 @@ def update_graph_temp(n,value):
     m = time1.minute
     s = time1.second
     t = h + m/60 + s/3600
-    print(t, df.iloc[n,2],df.iloc[n,15])
     
     xTemp.append(t)
     temp.append(df.iloc[n,2])
@@ -520,6 +628,95 @@ def update_graph_IR1(n,value):
     
     return fig
 
+##Callback for Water Flow Graph
+@app.callback(
+	Output('live-graph-water', 'figure'),
+	Input('water-update', 'n_intervals'),
+    Input('graph-slider-water', 'value')
+)
+
+def update_graph_water(n,value):
+    #used to set scale
+    df2 = df[['IFM Water Flow 1 (gpm)','IFM Water Flow 2 (gpm)']].copy()
+    
+    width = value*.01  #for slider
+    
+    time = df.iloc[n,0].split()[1]
+    
+    time2 = time.split('.')[0]
+    time1 = datetime.strptime(time2, '%H:%M:%S')
+        
+    h = time1.hour
+    m = time1.minute
+    s = time1.second
+    t = h + m/60 + s/3600
+    
+    xWater.append(t)
+    water1.append(df.iloc[n,18])
+    water2.append(df.iloc[n,20])
+    
+    print("water")
+
+
+    fig = make_subplots()
+
+    trace1 = go.Scatter(x=list(xWater), y=list(water1),mode='lines+markers',name = 'Water Flow One')
+    trace2 = go.Scatter(x=list(xWater), y=list(water2),mode='lines+markers',name = 'Water Flow Two')
+
+    fig.add_trace(trace1)
+    fig.add_trace(trace2)
+
+
+    fig.update_layout(xaxis=dict(range=[max(xWater)-width,max(xWater)+.0001]),
+                  yaxis = dict(range = [df2.to_numpy().min()-5,df2.to_numpy().max()+5]),
+                  paper_bgcolor="LightSteelBlue",
+                  )
+    
+    return fig
+
+##Callback for Air Flow Graph
+@app.callback(
+	Output('live-graph-air', 'figure'),
+	Input('air-update', 'n_intervals'),
+    Input('graph-slider-air', 'value')
+)
+
+def update_graph_air(n,value):
+    #used to set scale
+    df2 = df[['IFM Air Vel 1 (mA)']].copy()
+    
+    time = df.iloc[n,0].split()[1]
+    
+    time2 = time.split('.')[0]
+    time1 = datetime.strptime(time2, '%H:%M:%S')
+    
+    width = value*.01
+    
+    h = time1.hour
+    m = time1.minute
+    s = time1.second
+    t = h + m/60 + s/3600
+    
+    xAir.append(t)
+    air1.append(df.iloc[n,19])
+
+    fig = make_subplots()
+
+    trace1 = go.Scatter(x=list(xAir), y=list(air1),mode='lines+markers',name = 'Air Flow One')
+
+    
+    fig.add_trace(trace1)
+
+
+    fig.update_layout(xaxis=dict(range=[max(xAir)-width,max(xAir)+.0001]),
+                  yaxis = dict(range = [df2.to_numpy().min()-5,df2.to_numpy().max()+5]),
+                  paper_bgcolor="LightSteelBlue",
+                  )
+    
+    return fig
+
+
+
 @app.callback(Output('my-gauge-1', 'value'), 
               Input('gauge-update1', 'n_intervals'))
 def update_gauge2(n):
@@ -607,6 +804,25 @@ def update_gauge_rtd3(n):
     return value
 
 
+@app.callback(Output('gauge-water1', 'value'), 
+              Input('gauge-update-water1', 'n_intervals'))
+def update_gauge_water1(n):
+    value = df.iloc[n,18]
+    return value
+
+@app.callback(Output('gauge-water2', 'value'), 
+              Input('gauge-update-water2', 'n_intervals'))
+def update_gauge_water2(n):
+    value = df.iloc[n,20]
+    return value
+
+@app.callback(Output('gauge-air', 'value'), 
+              Input('gauge-update-air', 'n_intervals'))
+def update_gauge_rtd3(n):
+    value = df.iloc[n,19]
+    return value
+
+
 
 if __name__ == '__main__':
-	app.run_server(debug=True)
+	app.run_server(debug=False)
