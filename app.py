@@ -10,51 +10,60 @@ from plotly.subplots import make_subplots
 from datetime import datetime
 import dash_daq as daq
 
+#######################
 
 
 df = pd.read_csv('dex-chart.csv')
 
-#date = df.iloc[0,0].split()[1]
-maxLength = 100
+## Que datastructure for holding values for streaming
+
+maxLength = 100   # length of que
+
+
+#que for time on charts
 xTemp = deque(maxlen = maxLength)
+XIr1 = deque(maxlen = maxLength)
+xAir = deque(maxlen = maxLength)
+xWater = deque(maxlen = maxLength)
+
 temp = deque(maxlen = maxLength)
 temp2 = deque(maxlen = maxLength)
-XIr1 = deque(maxlen = maxLength)
-ir1 = deque(maxlen = maxLength)   #time
+ir1 = deque(maxlen = maxLength)   
 ir2 = deque(maxlen = maxLength)   
-ir3 = deque(maxlen = maxLength)   #time
-ir4 = deque(maxlen = maxLength)   #time
-ir5 = deque(maxlen = maxLength)   #time
-ir6 = deque(maxlen = maxLength)   #time
-ir7 = deque(maxlen = maxLength)   #time
-ir8 = deque(maxlen = maxLength)   #time
-ir9 = deque(maxlen = maxLength)   #time
-ir10 = deque(maxlen = maxLength)   #time
-rtd1 = deque(maxlen = maxLength)   #time
-rtd2 = deque(maxlen = maxLength)   #time
-rtd3 = deque(maxlen = maxLength)   #time
-p2 = deque(maxlen = maxLength)   #time
-p1 = deque(maxlen = maxLength)   #time
-xWater = deque(maxlen = maxLength)
-water1 = deque(maxlen = maxLength)   #time
-water2 = deque(maxlen = maxLength)   #time
-xAir = deque(maxlen = maxLength)
-air1 = deque(maxlen = maxLength)   #time
+ir3 = deque(maxlen = maxLength)   #
+ir4 = deque(maxlen = maxLength)   #
+ir5 = deque(maxlen = maxLength)   #
+ir6 = deque(maxlen = maxLength)   #
+ir7 = deque(maxlen = maxLength)   #
+ir8 = deque(maxlen = maxLength)   #
+ir9 = deque(maxlen = maxLength)   #t
+ir10 = deque(maxlen = maxLength)   #
+rtd1 = deque(maxlen = maxLength)   #
+rtd2 = deque(maxlen = maxLength)   #
+rtd3 = deque(maxlen = maxLength)   #
+p2 = deque(maxlen = maxLength)   #
+p1 = deque(maxlen = maxLength)   #
+water1 = deque(maxlen = maxLength)   #
+water2 = deque(maxlen = maxLength)   #
+air1 = deque(maxlen = maxLength)   
 
+
+### Start of Dash App
 
 app = dash.Dash(__name__)
 
 app.title = "Sensor Monitor"
 
-
+'''
 theme = {
     'dark': True,
     'detail': '#007439',
     'primary': '#00EA64',
     'secondary': '#6E6E6E',
 }
+'''
 
-gaugeSize = 150
+gaugeSize = 150  
 
 app.layout = html.Div([
     
@@ -78,7 +87,7 @@ app.layout = html.Div([
         #######################
         #Start of First Chart with temp ant RTD1
         html.Div([
-            html.H5('Temperature for Gaugae and RTD'),
+            html.H5('Temperature for Gauge and RTD'),
     		dcc.Graph(id = 'live-graph', animate = True),
     		dcc.Interval(
     			id = 'graph-update',
@@ -409,36 +418,65 @@ app.layout = html.Div([
         
         #######################
         #Start of Third Chart with water flow
-        html.Div([
-            html.H5('Water flow in GPM'),
-    		dcc.Graph(id = 'live-graph-water', animate = True),
-    		dcc.Interval(
-    			id = 'water-update',
-    			interval = 5000,
-    			n_intervals = 1
-    		),
-            dcc.Slider(
-                id='graph-slider-water',min=0,max=10,value=5
+        
+        
+        html.Table(
+            html.Tr([
+                html.Td(
+                    [
+                        html.H5('Water flow in GPM'),
+                		dcc.Graph(id = 'live-graph-water', 
+                            animate = True,
+                            
+                            config = {'displaylogo':False,
+                                
+                                      }
+                            ),
+                		dcc.Interval(
+                			id = 'water-update',
+                			interval = 5000,
+                			n_intervals = 1,
+                		),
+                        dcc.Slider(
+                            id='graph-slider-water',min=0,max=10,value=5
+                        ),
+                    ],style={'background-color':'#082255','border': '1',
+                             'width':'45%','border-radius':'0.75rem'
+                             },                    
+                    ),
+                html.Td(
+                    
+                    [
+                        html.H5('Air flow in GPM'),
+                		dcc.Graph(id = 'live-graph-air', 
+                            animate = True,
+                            
+                            ),
+                		dcc.Interval(
+                			id = 'air-update',
+                			interval = 5000,
+                			n_intervals = 1
+                		),
+                        dcc.Slider(
+                            id='graph-slider-air',min=0,max=10,value=5
+                        ),
+                        
+                        ],style={'background-color':'#082255','border': '1',
+                                 'width':'45%','border-radius':'0.75rem'
+                                 },  
+                    )
+                
+                ],  
+                
+                )
+            
             ),
-            ],
-            className="graph__container",
-        ),
-        #######################
-        #Start of Third Chart with air flow
-        html.Div([
-            html.H5('Air flow in GPM'),
-    		dcc.Graph(id = 'live-graph-air', animate = True),
-    		dcc.Interval(
-    			id = 'air-update',
-    			interval = 5000,
-    			n_intervals = 1
-    		),
-            dcc.Slider(
-                id='graph-slider-air',min=0,max=10,value=5
-            ),
-            ],
-            className="graph__container",
-        ),
+        
+        
+        
+        
+        
+        
         
         ## Water and Air Gauges#####################
         html.Table(
@@ -472,7 +510,7 @@ app.layout = html.Div([
                                 color={"gradient":False,"ranges":{"green":[-20,0],"yellow":[0,10],"red":[10,20]}},
                                 label = {"label":'Water Two',"style":{"color":"black","font-size":"30px"}},
                                 labelPosition='top',showCurrentValue=True,units='GPM',size=gaugeSize,
-                                scale={'start': -20, 'interval': 1, 'labelInterval': 10},
+                                scale={'start': -20, 'interval': 1, 'labelInterval': 5},
                                 max=20, min=-20, value=0
                                 ),
                             dcc.Interval(
@@ -483,19 +521,56 @@ app.layout = html.Div([
                             ]
                     ),
                 
-                #RTD2 Gauge ######################
+                #air Gauge ######################
                 html.Td(
                         [
                             daq.Gauge(
                                     id='gauge-air',
                                     color={"gradient":False,"ranges":{"green":[0,400],"yellow":[400,450],"red":[450,500]}},
-                                    label = {"label":'Air Flow',"style":{"color":"black","font-size":"30px"}},
+                                    label = {"label":'Air',"style":{"color":"black","font-size":"30px"}},
                                     labelPosition='top',showCurrentValue=True,units='F',size=gaugeSize,
                                     scale={'start': 0, 'interval': 5, 'labelInterval': 10},
                                     max=500, min=0, value=98
                                 ),
                             dcc.Interval(
                             		id = 'gauge-update-air',
+                            		interval = 5000,
+                            		n_intervals = 1
+                                )      
+                        ]
+
+                    ), 
+                html.Td(
+                        [
+                            daq.Gauge(
+                                id='gauge-p2',
+                                color={"gradient":False,"ranges":{"green":[0,350],"yellow":[350,400],"red":[400,500]}},
+                                label = {"label":'QPSH P2',"style":{"color":"black","font-size":"30px"}},
+                                labelPosition='top',showCurrentValue=True,units='GPM',size=gaugeSize,
+                                scale={'start': 0, 'interval': 5, 'labelInterval': 20},
+                                max=500, min=0, value=0
+                                ),
+                            dcc.Interval(
+                        		id = 'gauge-update-p2',
+                        		interval = 5000,
+                        		n_intervals = 1
+                                )      
+                            ]
+                    ),
+                
+                #RTD2 Gauge ######################
+                html.Td(
+                        [
+                            daq.Gauge(
+                                    id='gauge-p1',
+                                    color={"gradient":False,"ranges":{"green":[-20,0],"yellow":[0,10],"red":[10,20]}},
+                                    label = {"label":'Ashcroft P1',"style":{"color":"black","font-size":"30px"}},
+                                    labelPosition='top',showCurrentValue=True,units='F',size=gaugeSize,
+                                    scale={'start': -20, 'interval': 1, 'labelInterval': 5},
+                                    max=20, min=-20, value=0
+                                ),
+                            dcc.Interval(
+                            		id = 'gauge-update-p1',
                             		interval = 5000,
                             		n_intervals = 1
                                 )      
@@ -683,7 +758,7 @@ def update_graph_water(n,value):
 
 def update_graph_air(n,value):
     #used to set scale
-    df2 = df[['IFM Air Vel 1 (mA)']].copy()
+    df2 = df[['IFM Air Vel 1 (mA)','QPSH P2 (mA)','ASHCROFT P1 (mA)']].copy()
     
     time = df.iloc[n,0].split()[1]
     
@@ -699,13 +774,21 @@ def update_graph_air(n,value):
     
     xAir.append(t)
     air1.append(df.iloc[n,19])
+    p2.append(df.iloc[n,16])
+    p1.append(df.iloc[n,17])
+
+
 
     fig = make_subplots()
 
     trace1 = go.Scatter(x=list(xAir), y=list(air1),mode='lines+markers',name = 'Air Flow One')
+    trace2 = go.Scatter(x=list(xAir), y=list(p2),mode='lines+markers',name = 'QPSH P2')
+    trace3 = go.Scatter(x=list(xAir), y=list(p1),mode='lines+markers',name = 'ASHCROFT P1')
 
-    
     fig.add_trace(trace1)
+    fig.add_trace(trace2)
+    fig.add_trace(trace3)
+
 
 
     fig.update_layout(xaxis=dict(range=[max(xAir)-width,max(xAir)+.0001]),
@@ -818,11 +901,24 @@ def update_gauge_water2(n):
 
 @app.callback(Output('gauge-air', 'value'), 
               Input('gauge-update-air', 'n_intervals'))
-def update_gauge_rtd3(n):
+def update_gauge_air(n):
     value = df.iloc[n,19]
+    return value
+
+@app.callback(Output('gauge-p2', 'value'), 
+              Input('gauge-update-p2', 'n_intervals'))
+def update_gauge_p2(n):
+    value = df.iloc[n,16]
+    return value
+
+@app.callback(Output('gauge-p1', 'value'), 
+              Input('gauge-update-p1', 'n_intervals'))
+def update_gauge_p1(n):
+    value = df.iloc[n,17]
     return value
 
 
 
+
 if __name__ == '__main__':
-	app.run_server(debug=False)
+	app.run_server(debug=True)
